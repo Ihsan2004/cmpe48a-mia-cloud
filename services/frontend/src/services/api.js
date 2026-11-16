@@ -451,9 +451,8 @@ export async function retryAutoDetectChain(meetingId) {
 // chains ordered by most-recent meeting first. Caller filters out the
 // current chain client-side (the endpoint is intentionally generic).
 export async function listUserChains(limit = 100) {
-  const url = new URL(`${API_URL}/chains`)
-  if (limit) url.searchParams.set('limit', String(limit))
-  const resp = await authFetch(url.toString())
+  const qs = limit ? `?${new URLSearchParams({ limit: String(limit) }).toString()}` : ''
+  const resp = await authFetch(`${API_URL}/chains${qs}`)
   if (!resp.ok) {
     const error = await resp.json().catch(() => ({}))
     throw new Error(error.error || 'Zincirler yuklenemedi')
@@ -466,9 +465,8 @@ export async function listUserChains(limit = 100) {
 // Empty array is the normal state until Phase 4 starts producing pending
 // rows from the metadata-fallback band.
 export async function listChainSuggestions(limit = 20) {
-  const url = new URL(`${API_URL}/chain-suggestions`)
-  if (limit) url.searchParams.set('limit', String(limit))
-  const resp = await authFetch(url.toString())
+  const qs = limit ? `?${new URLSearchParams({ limit: String(limit) }).toString()}` : ''
+  const resp = await authFetch(`${API_URL}/chain-suggestions${qs}`)
   if (!resp.ok) {
     const error = await resp.json().catch(() => ({}))
     throw new Error(error.error || 'Failed to load chain suggestions')

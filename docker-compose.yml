@@ -1,0 +1,159 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: mia-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mia_local_password_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-mia}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/000_init_postgres.sql:/docker-entrypoint-initdb.d/000_init_postgres.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mia} -d ${POSTGRES_DB:-mia}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+    networks:
+      - mia-network
+
+  mia-search:
+    build:
+      context: ./services/mia-search
+      dockerfile: Dockerfile
+    container_name: mia-search
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: 8000
+      DATABASE_URL: ${DATABASE_URL:-postgresql://mia:mia_local_password_change_me@postgres:5432/mia?sslmode=disable}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+    networks:
+      - mia-network
+
+  brief-notifier:
+    build:
+      context: ./services/cloud-functions/brief-notifier
+      dockerfile: Dockerfile
+    container_name: mia-brief-notifier
+    ports:
+      - "8081:8080"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: 8080
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+    networks:
+      - mia-network
+
+  mia-backend:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile
+    container_name: mia-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: 8080
+      DATABASE_URL: ${DATABASE_URL:-postgresql://mia:mia_local_password_change_me@postgres:5432/mia?sslmode=disable}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:8080}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      NLP_SERVICE_URL: http://mia-search:8000
+      EXTERNAL_BOT_API_URL: http://meeting-bot:3000
+      BRIEF_NOTIFIER_FUNCTION_URL: http://brief-notifier:8080
+      LEGACY_BOT_COMPLETION_TRIGGER: "true"
+      # ElevenLabs runs in meeting-bot (Live WebSocket); keep unset on backend so batch STT stays off
+      ELEVENLABS_API_KEY: ""
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mia-search:
+        condition: service_healthy
+      brief-notifier:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+    networks:
+      - mia-network
+
+  meeting-bot:
+    build:
+      context: ./services/meeting-bot
+      dockerfile: Dockerfile.production
+    container_name: mia-meeting-bot
+    shm_size: "1gb"
+    ports:
+      - "3001:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      MIA_BACKEND_URL: http://mia-backend:8080
+      DATABASE_URL: ${DATABASE_URL:-postgresql://mia:mia_local_password_change_me@postgres:5432/mia?sslmode=disable}
+      DATABASE_SSL: ${DATABASE_SSL:-false}
+      STT_ENABLED: "true"
+      TRANSCRIPT_WRITE_ENABLED: "true"
+      VAD_ENABLED: "true"
+      MAX_CONCURRENT_MEETINGS: "1"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mia-backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mia-network
+
+  frontend:
+    build:
+      context: ./services/frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api}
+    container_name: mia-frontend
+    ports:
+      - "3000:80"
+    environment:
+      BACKEND_UPSTREAM: http://mia-backend:8080
+    depends_on:
+      mia-backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mia-network
+
+volumes:
+  pgdata:
+
+networks:
+  mia-network:
+    driver: bridge
