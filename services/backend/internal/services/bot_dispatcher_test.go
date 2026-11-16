@@ -149,6 +149,8 @@ func TestHTTPBotDispatcher_OmitsAuthHeaderWhenKeyUnset(t *testing.T) {
 	defer server.Close()
 
 	t.Setenv("EXTERNAL_BOT_API_KEY", "")
+	t.Setenv("MIA_BOT_API_KEY", "")
+	t.Setenv("BOT_API_KEY", "")
 	d := NewHTTPBotDispatcher(server.URL)
 	_ = d.DispatchBot(context.Background(), BotDispatchRequest{
 		MeetingID:  uuid.New(),
@@ -157,6 +159,28 @@ func TestHTTPBotDispatcher_OmitsAuthHeaderWhenKeyUnset(t *testing.T) {
 	})
 	if gotKey != "" {
 		t.Errorf("expected no api key header, got %q", gotKey)
+	}
+}
+
+func TestHTTPBotDispatcher_FallsBackToMiaBotAPIKey(t *testing.T) {
+	var gotKey string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		gotKey = r.Header.Get("x-bot-api-key")
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	t.Setenv("EXTERNAL_BOT_API_KEY", "")
+	t.Setenv("MIA_BOT_API_KEY", "shared-bot-key")
+	t.Setenv("BOT_API_KEY", "")
+	d := NewHTTPBotDispatcher(server.URL)
+	_ = d.DispatchBot(context.Background(), BotDispatchRequest{
+		MeetingID:  uuid.New(),
+		MeetingURL: "u",
+		BotName:    "B",
+	})
+	if gotKey != "shared-bot-key" {
+		t.Errorf("expected fallback api key header, got %q", gotKey)
 	}
 }
 

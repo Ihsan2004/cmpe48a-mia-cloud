@@ -59,11 +59,19 @@ type HTTPBotDispatcher struct {
 }
 
 // NewHTTPBotDispatcher returns the legacy HTTP dispatcher. apiKey comes
-// from EXTERNAL_BOT_API_KEY; if empty, the auth header is omitted.
+// from EXTERNAL_BOT_API_KEY (with fallback to MIA_BOT_API_KEY / BOT_API_KEY);
+// if empty, the auth header is omitted.
 func NewHTTPBotDispatcher(botAPIURL string) *HTTPBotDispatcher {
+	apiKey := os.Getenv("EXTERNAL_BOT_API_KEY")
+	if apiKey == "" {
+		apiKey = os.Getenv("MIA_BOT_API_KEY")
+	}
+	if apiKey == "" {
+		apiKey = os.Getenv("BOT_API_KEY")
+	}
 	return &HTTPBotDispatcher{
 		botAPIURL: botAPIURL,
-		apiKey:    os.Getenv("EXTERNAL_BOT_API_KEY"),
+		apiKey:    apiKey,
 		client:    &http.Client{Timeout: 30 * time.Second},
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -70,8 +71,12 @@ func main() {
 
 	// Middleware
 	app.Use(middleware.RequestLogger())
+	corsOrigins := cfg.CORSOrigins
+	if corsOrigins == "" {
+		corsOrigins = "http://localhost:3000"
+	}
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     cfg.CORSOrigins,
+		AllowOrigins:     corsOrigins,
 		AllowCredentials: true,
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization, Cookie, X-OAuth-State",
 		ExposeHeaders:    "Set-Cookie, Retry-After, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-RateLimit-Tier",
@@ -92,26 +97,20 @@ func main() {
 		slog.Warn("SUPABASE_STORAGE_URL or SUPABASE_SERVICE_ROLE_KEY not set, upload endpoints disabled")
 	}
 
-	// Wire ElevenLabs batch transcription (Phase 3). elevenLabsSvc is nil
-	// when the API key isn't set; TranscriptionService in turn stays nil
-	// so routes.go skips the webhook endpoint and the worker refuses
-	// transcribe jobs.
-	//
-	// Fail-fast guard (Phase 3 fix 2026-04-20): if the API key is set but
-	// the webhook id or webhook secret is missing, transcription would
-	// submit jobs that never complete (webhook gets 503) — a worse state
-	// than "disabled". Refuse to boot.
-	if cfg.ElevenLabsAPIKey != "" {
-		if cfg.ElevenLabsWebhookID == "" || os.Getenv("ELEVENLABS_WEBHOOK_SECRET") == "" {
-			log.Fatalf("ELEVENLABS_API_KEY is set but ELEVENLABS_WEBHOOK_ID and/or ELEVENLABS_WEBHOOK_SECRET are missing — refusing to start with half-configured transcription")
-		}
+	// Wire ElevenLabs batch transcription only when API key, webhook ID, webhook secret,
+	// and storage client are all explicitly configured. In real-time bot mode (Live WebSocket
+	// inside meeting-bot), backend does not need batch webhooks or storage.
+	var elevenLabsSvc *services.ElevenLabsBatchService
+	if cfg.ElevenLabsAPIKey != "" && cfg.ElevenLabsWebhookID != "" && os.Getenv("ELEVENLABS_WEBHOOK_SECRET") != "" {
+		elevenLabsSvc = services.NewElevenLabsBatchService(services.ElevenLabsBatchConfig{
+			APIKey:       cfg.ElevenLabsAPIKey,
+			WebhookID:    cfg.ElevenLabsWebhookID,
+			ModelID:      cfg.ElevenLabsModelID,
+			LanguageCode: cfg.ElevenLabsLanguage,
+		})
+	} else if cfg.ElevenLabsAPIKey != "" {
+		slog.Info("ElevenLabs batch webhook credentials not set — batch transcription disabled (using real-time bot STT)")
 	}
-	elevenLabsSvc := services.NewElevenLabsBatchService(services.ElevenLabsBatchConfig{
-		APIKey:       cfg.ElevenLabsAPIKey,
-		WebhookID:    cfg.ElevenLabsWebhookID,
-		ModelID:      cfg.ElevenLabsModelID,
-		LanguageCode: cfg.ElevenLabsLanguage,
-	})
 	var transcriptionSvc *services.TranscriptionService
 	if elevenLabsSvc != nil && storageClient != nil {
 		transcriptionSvc = services.NewTranscriptionService(elevenLabsSvc, storageClient)
@@ -288,11 +287,36 @@ func main() {
 		}
 	}
 
-	// Phase 2: register the email deliverer when SMTP is configured.
-	// Missing host/password → email channel stays dormant. Gating on
-	// both prevents half-configured deploys from silently failing
-	// every delivery at run time.
-	if cfg.SMTPHost != "" && cfg.BotMailAppPassword != "" && cfg.BotMailAuthUser != "" && cfg.BotMailFromAddress != "" {
+	// Register email brief deliverer: prefer Cloud Function (brief-notifier) when
+	// BRIEF_NOTIFIER_FUNCTION_URL is configured; otherwise fall back to direct SMTP.
+	if strings.TrimSpace(cfg.BriefNotifierFunctionURL) != "" {
+		cfTransport, err := briefnotify.NewCloudFunctionEmailTransport(
+			cfg.BriefNotifierFunctionURL,
+			cfg.InternalServiceSharedSecret,
+		)
+		if err != nil {
+			slog.Warn("Cloud Function transport init failed", "error", err)
+		} else {
+			fromAddr := cfg.BotMailFromAddress
+			if fromAddr == "" {
+				fromAddr = "brief@mia.local"
+			}
+			emailDeliverer, err := briefnotify.NewEmailBriefDeliverer(briefnotify.EmailBriefDelivererConfig{
+				FromAddress:        fromAddr,
+				FromDisplay:        cfg.BotMailFromDisplayName,
+				ReplyTo:            cfg.BotMailReplyTo,
+				DashboardBaseURL:   cfg.FrontendURL,
+				UnsubscribeBaseURL: cfg.FrontendURL,
+				UnsubscribeSigner:  unsubscribeSigner,
+			}, cfTransport)
+			if err != nil {
+				slog.Warn("Cloud Function EmailBriefDeliverer init failed", "error", err)
+			} else {
+				briefDispatcher.Register(emailDeliverer)
+				slog.Info("Cloud Function email brief deliverer registered", "url", cfg.BriefNotifierFunctionURL)
+			}
+		}
+	} else if cfg.SMTPHost != "" && cfg.BotMailAppPassword != "" && cfg.BotMailAuthUser != "" && cfg.BotMailFromAddress != "" {
 		smtpClient, err := smtpmail.New(smtpmail.Config{
 			Host:         cfg.SMTPHost,
 			Port:         cfg.SMTPPort,

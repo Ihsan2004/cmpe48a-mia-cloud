@@ -8,7 +8,6 @@ import {
 } from 'lucide-react'
 import { syncCalendar, getMeetings, respondMeeting, cancelMeeting, startCalendarWatch, getUpcomingBriefs } from '../services/api'
 import { showError, showSuccess } from '../utils/toast'
-import { supabase } from '../services/supabase'
 import LoadingState from '../components/LoadingState'
 import EmptyState from '../components/EmptyState'
 import ErrorState from '../components/ErrorState'
@@ -76,31 +75,6 @@ export default function Dashboard() {
     if (calendarError) {
       showError(calendarError)
       localStorage.removeItem('google_calendar_error')
-    }
-
-    if (!supabase) return
-
-    const channel = supabase
-      .channel('meetings-realtime')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'meetings',
-        },
-        () => {
-          loadMeetings()
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'CHANNEL_ERROR') {
-          console.error('Failed to subscribe to real-time updates')
-        }
-      })
-
-    return () => {
-      supabase.removeChannel(channel)
     }
   }, [loadMeetings])
 

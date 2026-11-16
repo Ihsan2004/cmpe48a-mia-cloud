@@ -1,28 +1,29 @@
-"""Database connection singleton.
+"""Database connection helper for PostgreSQL (Cloud SQL / Docker pgvector).
 
-Only provides the Supabase client. All query logic lives in repositories/.
+Reads DATABASE_URL from environment and yields psycopg connections configured
+with dict_row so repository methods return plain dictionaries.
 """
+from contextlib import contextmanager
 import os
-from typing import Optional
-from supabase import create_client, Client
+from typing import Iterator
 
-_supabase_client: Optional[Client] = None
+import psycopg
+from psycopg.rows import dict_row
 
 
-def get_supabase_client() -> Client:
-    """Get or create Supabase client."""
-    global _supabase_client
+def get_database_url() -> str:
+    """Return DATABASE_URL from environment or raise a clear configuration error."""
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is required.")
+    return database_url
 
-    if _supabase_client is None:
-        supabase_url = os.getenv("SUPABASE_URL")
-        supabase_key = os.getenv("SUPABASE_KEY")
 
-        if not supabase_url or not supabase_key:
-            raise ValueError(
-                "SUPABASE_URL and SUPABASE_KEY environment variables are required."
-            )
-
-        _supabase_client = create_client(supabase_url, supabase_key)
-        print(f"Connected to Supabase: {supabase_url}")
-
-    return _supabase_client
+@contextmanager
+def get_db_connection() -> Iterator[psycopg.Connection]:
+    """Open and yield a psycopg PostgreSQL connection with dict_row factory."""
+    conn = psycopg.connect(get_database_url(), row_factory=dict_row)
+    try:
+        yield conn
+    finally:
+        conn.close()

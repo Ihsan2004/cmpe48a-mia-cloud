@@ -23,7 +23,11 @@ type Config struct {
 	PerplexityAPIKey   string
 	GuestIntelEnabled  bool
 
-	// Supabase Storage (batch transcription audio lifecycle — Phase 1 of batch migration)
+	// Cloud Functions brief notifier (optional HTTP serverless deliverer)
+	BriefNotifierFunctionURL    string
+	InternalServiceSharedSecret string
+
+	// Supabase Storage (legacy batch transcription — optional, disabled when unset)
 	SupabaseStorageURL     string // e.g. https://<project>.supabase.co/storage/v1
 	SupabaseServiceRoleKey string // server-side only, bypasses RLS
 	SupabaseAudioBucket    string // bucket name for meeting audio (default "meeting-audio")
@@ -80,15 +84,18 @@ func Load() (*Config, error) {
 		GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
 		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
 		GoogleRedirectURI:  getEnvOrDefault("GOOGLE_REDIRECT_URI", ""),
-		FrontendURL:        getEnvOrDefault("FRONTEND_URL", ""),
+		FrontendURL:        getEnvOrDefault("FRONTEND_URL", "http://localhost:3000"),
 		Port:               getEnvOrDefault("PORT", "8080"),
-		CORSOrigins:        getEnvOrDefault("CORS_ORIGINS", ""),
-		MiaSearchURL:       getEnvOrDefault("MIA_SEARCH_URL", "http://mia-search:8000"),
+		CORSOrigins:        getEnvOrDefault("CORS_ORIGINS", "http://localhost:3000"),
+		MiaSearchURL:       getEnvOrDefault("NLP_SERVICE_URL", getEnvOrDefault("MIA_SEARCH_URL", "http://mia-search:8000")),
 		ExternalBotAPIURL:  os.Getenv("EXTERNAL_BOT_API_URL"),
 		OpenAIAPIKey:       os.Getenv("OPENAI_API_KEY"),
 		Environment:        getEnvOrDefault("APP_ENV", "development"),
 		PerplexityAPIKey:   os.Getenv("PERPLEXITY_API_KEY"),
 		GuestIntelEnabled:  getEnvOrDefault("GUEST_INTEL_ENABLED", "") == "true",
+
+		BriefNotifierFunctionURL:    os.Getenv("BRIEF_NOTIFIER_FUNCTION_URL"),
+		InternalServiceSharedSecret: os.Getenv("INTERNAL_SERVICE_SHARED_SECRET"),
 
 		SupabaseStorageURL:     os.Getenv("SUPABASE_STORAGE_URL"),
 		SupabaseServiceRoleKey: os.Getenv("SUPABASE_SERVICE_ROLE_KEY"),

@@ -146,7 +146,14 @@ func (h *BotHandler) JoinMeeting(c *fiber.Ctx) error {
 		return apperror.Send(c, apperror.Internal("Asistan isteği oluşturulamadı.", err), "create_bot_request")
 	}
 	req2.Header.Set("Content-Type", "application/json")
-	if botAPIKey := os.Getenv("EXTERNAL_BOT_API_KEY"); botAPIKey != "" {
+	botAPIKey := os.Getenv("EXTERNAL_BOT_API_KEY")
+	if botAPIKey == "" {
+		botAPIKey = os.Getenv("MIA_BOT_API_KEY")
+	}
+	if botAPIKey == "" {
+		botAPIKey = os.Getenv("BOT_API_KEY")
+	}
+	if botAPIKey != "" {
 		req2.Header.Set("x-bot-api-key", botAPIKey)
 	}
 
