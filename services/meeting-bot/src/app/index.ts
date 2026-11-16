@@ -20,6 +20,13 @@ export const redisConsumerService = new RedisConsumerService();
 let gracefulShutdown = 0;
 
 app.get('/isbusy', async (req, res) => {
+  if (gracefulShutdown === 1) {
+    return res.status(503).json({
+      success: false,
+      data: 1,
+      error: 'Service is shutting down',
+    });
+  }
   const running = containerManager.getRunningCount();
   const max = containerManager.getMaxConcurrent();
   return res.status(200).json({
@@ -32,11 +39,18 @@ app.get('/isbusy', async (req, res) => {
 });
 
 app.get('/health', async (req, res) => {
-  const dockerAvailable = await containerManager.isDockerAvailable();
-  const statusCode = dockerAvailable ? 200 : 503;
+  if (gracefulShutdown === 1) {
+    return res.status(503).json({
+      status: 'shutting_down',
+      mode: 'in-container',
+      timestamp: new Date().toISOString(),
+    });
+  }
+  const ready = await containerManager.isReady();
+  const statusCode = ready ? 200 : 503;
   return res.status(statusCode).json({
-    status: dockerAvailable ? 'healthy' : 'degraded',
-    docker: dockerAvailable,
+    status: ready ? 'healthy' : 'degraded',
+    mode: 'in-container',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     meetings: {
@@ -66,6 +80,10 @@ app.get('/metrics', async (req, res) => {
 
 // Unified meeting join endpoint
 const joinMeeting = async (req: Request, res: Response) => {
+  if (gracefulShutdown === 1) {
+    return res.status(503).json({ success: false, error: 'Service is shutting down' });
+  }
+
   // API key auth
   const apiKey = req.headers['x-bot-api-key'] as string;
   if (!apiKey || apiKey !== config.miaBotApiKey) {

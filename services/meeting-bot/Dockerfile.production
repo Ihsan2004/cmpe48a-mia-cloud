@@ -82,8 +82,8 @@ RUN npm run build
 USER root
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
-RUN mkdir -p /usr/src/app/dist/_tempvideo \
-    && chmod -R 777 /usr/src/app/dist/_tempvideo
+RUN mkdir -p /usr/src/app/dist/_tempvideo /usr/src/app/dist/_pcm_debug \
+    && chmod -R 777 /usr/src/app/dist/_tempvideo /usr/src/app/dist/_pcm_debug
 
 # Create PulseAudio directories for non-root user
 RUN mkdir -p /run/user/1001 \
@@ -104,8 +104,8 @@ RUN npx playwright install
 EXPOSE 3000
 
 # Health check — skip in CLI mode (meeting containers don't run Express)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD if [ -n "$MEETING_ID" ]; then exit 0; else node -e "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1; fi
+HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
+  CMD if [ -n "$MEETING_ID" ]; then exit 0; else node -e "require('http').get('http://localhost:' + (process.env.PORT || 3000) + '/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1; fi
 
 # Set the entry point
 ENTRYPOINT ["/usr/src/app/xvfb-run-wrapper"]

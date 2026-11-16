@@ -398,6 +398,20 @@ class DiskUploader implements IUploader {
         throw new Error(`Unable to finalise the temp recording file: ${this._meetingId} ${this._meetingId}`);
       }
 
+      // In live-STT mode without S3/Azure credentials configured, clean up the
+      // local temp recording so disk space does not accumulate across meetings.
+      const hasRemoteStorage =
+        (config.storageProvider === 'azure' && Boolean(config.azureBlobStorage.container || config.azureBlobStorage.connectionString)) ||
+        (config.storageProvider === 's3' && Boolean(config.s3CompatibleStorage.bucket && config.s3CompatibleStorage.accessKeyId));
+
+      if (!hasRemoteStorage) {
+        this._logger.info('Remote object storage not configured — skipping upload and cleaning temp file', {
+          meetingId: this._meetingId,
+        });
+        await this.deleteTempFileAsync();
+        return true;
+      }
+
       // Upload recording to object storage (S3 or Azure)
       const uploadResult = await this.uploadRecordingToObjectStorage();
 

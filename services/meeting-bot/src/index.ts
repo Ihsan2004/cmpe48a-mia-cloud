@@ -10,7 +10,7 @@ import { loggerFactory } from './util/logger';
 
 const logger = loggerFactory('system', 'server');
 
-const port = 3000;
+const port = Number(config.port) || 3000;
 
 // Create Express server
 const server = http.createServer(app);

@@ -137,8 +137,8 @@ export default {
   // Backend Signals (Faz 7 — Signal Integration)
   miaBackendSignalsEnabled: process.env.MIA_BACKEND_SIGNALS_ENABLED !== 'false', // default true
   miaHeartbeatIntervalMs: Number(process.env.MIA_HEARTBEAT_INTERVAL_MS) || 30000,
-  // Container-per-meeting dispatcher (Faz 8)
-  maxConcurrentMeetings: Number(process.env.MAX_CONCURRENT_MEETINGS) || 3,
+  // In-container meeting runner concurrency (default 1 to isolate Xvfb :99 & PulseAudio monitor)
+  maxConcurrentMeetings: Number(process.env.MAX_CONCURRENT_MEETINGS) || 1,
   meetingDockerImage: process.env.MEETING_DOCKER_IMAGE || 'ihsan674/mia-meeting-bot:latest',
   // (Faz 9 configs removed — single STT connection replaces per-participant pool)
   // Authenticated join credentials (optional — falls back to guest if not set)

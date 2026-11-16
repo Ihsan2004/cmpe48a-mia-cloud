@@ -1,6 +1,6 @@
 /**
- * CLI Entry Point — runs a single meeting in container mode.
- * No Express server — reads params from env vars, joins meeting, exits.
+ * CLI Entry Point — runs a single meeting in-container.
+ * Reads params from env vars, joins meeting, exits.
  *
  * Usage: node dist/cli.js
  * Env vars: MEETING_URL, BOT_NAME, MEETING_ID, MEETING_LANGUAGE
@@ -40,7 +40,9 @@ if (!provider) {
 const correlationId = createCorrelationId({ meetingId, url: meetingUrl });
 const logger = loggerFactory(correlationId, provider);
 
-let shutdownInProgress = false;
+let cleanupPromise: Promise<void> | null = null;
+let activeSttService: SttLifecycle | undefined;
+let activeBackendClient: ReturnType<typeof createMiaBackendClient> | undefined;
 
 async function run(): Promise<void> {
   logger.info('CLI mode: starting meeting', { meetingId, provider, meetingUrl });
@@ -48,15 +50,15 @@ async function run(): Promise<void> {
   const tempFileId = encodeFileNameSafebase64(`${meetingId}0`);
   const uploader: IUploader = await DiskUploader.initialize(meetingId, tempFileId, logger, meetingUrl);
   const miaBackendClient = createMiaBackendClient(meetingId, meetingUrl, logger);
+  activeBackendClient = miaBackendClient;
 
-  // Single STT connection: mixed audio → single ElevenLabs WebSocket
-  // Speaker attribution handled by ActiveSpeakerService (speaker timeline + overlap scoring)
   let pcmStreamService: PcmStreamService | undefined;
   let sttService: SttLifecycle | undefined;
 
   if (config.sttEnabled) {
     pcmStreamService = new PcmStreamService(meetingId, logger);
     sttService = await createSttPipeline(pcmStreamService, meetingId, meetingUrl, language, logger);
+    activeSttService = sttService;
   }
 
   const joinParams = { url: meetingUrl, name: botName, meetingId, language, uploader, pcmStreamService, sttService, miaBackendClient };
@@ -80,35 +82,56 @@ async function run(): Promise<void> {
   }
 }
 
-async function cleanup(): Promise<void> {
-  if (shutdownInProgress) return;
-  shutdownInProgress = true;
-  logger.info('CLI mode: cleaning up...');
-  await closePool();
+async function cleanup(terminatedBySignal = false): Promise<void> {
+  if (!cleanupPromise) {
+    cleanupPromise = (async () => {
+      logger.info('CLI mode: cleaning up...', { terminatedBySignal });
+      try {
+        activeBackendClient?.stopHeartbeat();
+        if (terminatedBySignal && activeBackendClient) {
+          await activeBackendClient.sendFailedEvent('worker_terminated');
+        }
+      } catch {
+        // Non-fatal during shutdown
+      }
+      try {
+        await activeSttService?.disconnect();
+      } catch {
+        // Non-fatal during shutdown
+      }
+      await closePool();
+    })();
+  }
+  await cleanupPromise;
 }
 
-// Signal handling for graceful shutdown
-process.on('SIGTERM', async () => {
-  logger.info('CLI mode: SIGTERM received');
-  await cleanup();
-  process.exit(0);
-});
+function handleTerminationSignal(signal: NodeJS.Signals, exitCode: number): void {
+  logger.info(`CLI mode: ${signal} received`);
+  cleanup(true)
+    .finally(() => process.exit(exitCode));
+}
 
-process.on('SIGABRT', async () => {
-  logger.info('CLI mode: SIGABRT received');
-  await cleanup();
-  process.exit(0);
+process.on('SIGTERM', () => handleTerminationSignal('SIGTERM', 143));
+process.on('SIGINT', () => handleTerminationSignal('SIGINT', 130));
+process.on('SIGABRT', () => handleTerminationSignal('SIGABRT', 134));
+process.on('uncaughtException', (err) => {
+  logger.error('CLI mode: uncaughtException', { error: err.message });
+  cleanup(true).finally(() => process.exit(1));
+});
+process.on('unhandledRejection', (reason) => {
+  logger.error('CLI mode: unhandledRejection', { reason: String(reason) });
+  cleanup(true).finally(() => process.exit(1));
 });
 
 // Main execution
 run()
   .then(async () => {
     logger.info('CLI mode: meeting completed successfully', { meetingId });
-    await cleanup();
+    await cleanup(false);
     process.exit(0);
   })
   .catch(async (error) => {
     logger.error('CLI mode: meeting failed', { meetingId, error: error instanceof Error ? error.message : String(error) });
-    await cleanup();
+    await cleanup(false);
     process.exit(1);
   });
