@@ -1,0 +1,65 @@
+{
+  "input": [
+    {
+      "EventID": "c1",
+      "RecurringEventID": "s1",
+      "StartTime": "2026-04-06T09:00:00Z",
+      "EndTime": "2026-04-06T09:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "1:1",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "c2",
+      "RecurringEventID": "s1",
+      "StartTime": "2026-04-13T09:00:00Z",
+      "EndTime": "2026-04-13T09:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "1:1",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "c3",
+      "RecurringEventID": "s2",
+      "StartTime": "2026-04-13T11:00:00Z",
+      "EndTime": "2026-04-13T11:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "Sync",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "carol@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    }
+  ],
+  "expected_status": "degenerate",
+  "expected_empty_reason": "insufficient_meetings",
+  "expected_teams": []
+}

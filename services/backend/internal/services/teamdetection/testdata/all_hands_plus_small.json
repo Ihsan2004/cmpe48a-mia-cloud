@@ -1,0 +1,546 @@
+{
+  "input": [
+    {
+      "EventID": "ah-1",
+      "RecurringEventID": "all-hands",
+      "StartTime": "2026-04-06T09:00:00Z",
+      "EndTime": "2026-04-06T09:30:00Z",
+      "Organizer": "user01@example.com",
+      "Title": "All Hands",
+      "Attendees": [
+        {
+          "Email": "user01@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user02@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user03@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user04@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user05@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user06@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user07@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user08@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user09@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user10@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user11@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user12@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user13@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user14@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user15@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user16@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user17@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user18@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user19@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user20@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user21@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user22@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user23@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user24@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user25@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user26@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user27@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user28@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user29@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user30@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user31@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user32@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user33@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user34@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user35@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user36@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user37@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user38@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user39@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user40@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user41@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user42@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user43@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user44@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user45@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user46@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user47@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user48@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user49@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "user50@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "backend-1",
+      "RecurringEventID": "backend",
+      "StartTime": "2026-04-06T11:00:00Z",
+      "EndTime": "2026-04-06T11:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "Backend Weekly",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "carol@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "dan@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "backend-2",
+      "RecurringEventID": "backend",
+      "StartTime": "2026-04-06T12:00:00Z",
+      "EndTime": "2026-04-06T12:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "Backend Weekly",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "carol@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "dan@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "backend-3",
+      "RecurringEventID": "backend",
+      "StartTime": "2026-04-13T11:00:00Z",
+      "EndTime": "2026-04-13T11:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "Backend Weekly",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "carol@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "dan@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "backend-4",
+      "RecurringEventID": "backend",
+      "StartTime": "2026-04-13T12:00:00Z",
+      "EndTime": "2026-04-13T12:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "Backend Weekly",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "carol@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "dan@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "backend-5",
+      "RecurringEventID": "backend",
+      "StartTime": "2026-04-20T11:00:00Z",
+      "EndTime": "2026-04-20T11:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "Backend Weekly",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "carol@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "dan@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "backend-6",
+      "RecurringEventID": "backend",
+      "StartTime": "2026-04-27T11:00:00Z",
+      "EndTime": "2026-04-27T11:30:00Z",
+      "Organizer": "alice@example.com",
+      "Title": "Backend Weekly",
+      "Attendees": [
+        {
+          "Email": "alice@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "bob@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "carol@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "dan@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "frontend-1",
+      "RecurringEventID": "frontend",
+      "StartTime": "2026-04-06T14:00:00Z",
+      "EndTime": "2026-04-06T14:30:00Z",
+      "Organizer": "eve@example.com",
+      "Title": "Frontend Weekly",
+      "Attendees": [
+        {
+          "Email": "eve@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "frank@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "grace@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "henry@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "frontend-2",
+      "RecurringEventID": "frontend",
+      "StartTime": "2026-04-06T15:00:00Z",
+      "EndTime": "2026-04-06T15:30:00Z",
+      "Organizer": "eve@example.com",
+      "Title": "Frontend Weekly",
+      "Attendees": [
+        {
+          "Email": "eve@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "frank@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "grace@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "henry@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "frontend-3",
+      "RecurringEventID": "frontend",
+      "StartTime": "2026-04-13T14:00:00Z",
+      "EndTime": "2026-04-13T14:30:00Z",
+      "Organizer": "eve@example.com",
+      "Title": "Frontend Weekly",
+      "Attendees": [
+        {
+          "Email": "eve@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "frank@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "grace@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "henry@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "frontend-4",
+      "RecurringEventID": "frontend",
+      "StartTime": "2026-04-13T15:00:00Z",
+      "EndTime": "2026-04-13T15:30:00Z",
+      "Organizer": "eve@example.com",
+      "Title": "Frontend Weekly",
+      "Attendees": [
+        {
+          "Email": "eve@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "frank@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "grace@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "henry@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "frontend-5",
+      "RecurringEventID": "frontend",
+      "StartTime": "2026-04-20T14:00:00Z",
+      "EndTime": "2026-04-20T14:30:00Z",
+      "Organizer": "eve@example.com",
+      "Title": "Frontend Weekly",
+      "Attendees": [
+        {
+          "Email": "eve@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "frank@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "grace@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "henry@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    },
+    {
+      "EventID": "frontend-6",
+      "RecurringEventID": "frontend",
+      "StartTime": "2026-04-27T14:00:00Z",
+      "EndTime": "2026-04-27T14:30:00Z",
+      "Organizer": "eve@example.com",
+      "Title": "Frontend Weekly",
+      "Attendees": [
+        {
+          "Email": "eve@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "frank@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "grace@example.com",
+          "ResponseStatus": "accepted"
+        },
+        {
+          "Email": "henry@example.com",
+          "ResponseStatus": "accepted"
+        }
+      ]
+    }
+  ],
+  "expected_status": "success",
+  "expected_empty_reason": "",
+  "expected_teams": [
+    {
+      "members": [
+        "alice@example.com",
+        "bob@example.com",
+        "carol@example.com",
+        "dan@example.com"
+      ]
+    },
+    {
+      "members": [
+        "eve@example.com",
+        "frank@example.com",
+        "grace@example.com",
+        "henry@example.com"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,490 @@
+/* Flow page — Syncrun editorial tokens scoped to the flow wrapper */
+.meeting-flow-wrapper {
+  --mia-bg: #f8f6f2;                 /* canvas-bone */
+  --mia-surface: #f8f6f2;            /* canvas-bone */
+  --mia-elevated: #eceae5;           /* canvas-muted */
+  --mia-primary: #2d2b27;            /* ink-charcoal */
+  --mia-accent: #8b6b2e;             /* accent-ochre-ink */
+  --mia-text: #2d2b27;               /* ink-charcoal */
+  --mia-text-secondary: #706e69;     /* ink-secondary */
+  --mia-text-tertiary: rgba(45, 43, 39, 0.55);
+  --mia-text-muted: rgba(45, 43, 39, 0.40);
+  --mia-border: #eceae5;             /* canvas-muted */
+  --mia-font-heading: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --mia-font-body: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --mia-radius-sm: 0;
+  --mia-radius-md: 0;
+  --mia-radius-lg: 0;
+  --mia-shadow-subtle: none;
+  --mia-shadow-medium: none;
+  --mia-shadow-glow: 0 0 0 2px #f8f6f2, 0 0 0 4px #8b6b2e;
+
+  width: 100%;
+  height: calc(100vh - 0px);
+  box-sizing: border-box;
+  background: var(--mia-bg);
+  position: relative;
+}
+
+.flow-toolbar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+}
+
+.view-toggle-btn,
+.scope-toggle-btn {
+  background: var(--mia-surface);
+  color: var(--mia-text-secondary);
+  border: 1px solid var(--mia-border);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-family: var(--mia-font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.view-toggle-btn:hover,
+.scope-toggle-btn:hover {
+  color: var(--mia-text);
+  border-color: var(--mia-text-secondary);
+}
+
+.scope-toggle-btn--active {
+  color: var(--mia-text);
+  border-color: var(--mia-accent);
+}
+
+.react-flow__node-dayColumn {
+  z-index: 0 !important;
+}
+
+.react-flow__node-meeting {
+  z-index: 10 !important;
+}
+
+.react-flow__edgelabel-renderer {
+  z-index: 5 !important;
+}
+
+/* ============= Day Column ============= */
+.day-column-node {
+  width: 100%;
+  height: 100%;
+  background: var(--mia-surface);
+  border-radius: 0;
+  border: 1px solid var(--mia-border);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.day-column-header {
+  height: 44px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mia-text);
+  font-family: var(--mia-font-heading);
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid var(--mia-border);
+}
+
+.day-column-body {
+  flex: 1;
+}
+
+/* ============= Meeting Node ============= */
+.meeting-node {
+  width: 100%;
+  height: 100%;
+  background: var(--mia-surface);
+  border-radius: 0;
+  border: 1px solid var(--mia-border);
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.meeting-node:hover {
+  border-color: var(--mia-text-secondary);
+}
+
+.meeting-node--selected {
+  outline: none;
+  border-color: var(--mia-accent);
+}
+
+.meeting-node-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.meeting-node-title {
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--mia-text);
+  line-height: 1.3;
+  font-family: var(--mia-font-heading);
+  letter-spacing: -0.01em;
+}
+
+.meeting-node-time {
+  font-size: 11px;
+  color: var(--mia-text-tertiary);
+  font-weight: 400;
+  font-family: var(--mia-font-body);
+}
+
+.meeting-node-attendees {
+  display: flex;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.meeting-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mia-bg);
+  font-size: 10px;
+  font-weight: 500;
+  font-family: var(--mia-font-body);
+}
+
+.meeting-avatar--more {
+  background: var(--mia-elevated) !important;
+  color: var(--mia-text);
+  font-size: 9px;
+}
+
+.meeting-recurring-badge {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 14px;
+  color: var(--mia-text-muted);
+}
+
+/* ============= Ghost Node ============= */
+.meeting-node--ghost {
+  border-style: dashed;
+  border-color: var(--mia-text-muted);
+  background: var(--mia-bg);
+}
+
+.meeting-node-ghost-date {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--mia-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 2px;
+  font-family: var(--mia-font-body);
+}
+
+/* ============= Today Column ============= */
+.day-column-node--today {
+  border-color: var(--mia-text-secondary);
+}
+
+/* ============= Chain Legend ============= */
+.chain-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 20;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chain-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--mia-surface);
+  border: 1px solid var(--mia-border);
+  border-radius: 9999px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease;
+  font-family: var(--mia-font-body);
+  font-size: 12px;
+  color: var(--mia-text-secondary);
+}
+
+.chain-legend-item:hover,
+.chain-legend-item--active {
+  color: var(--mia-text);
+  border-color: var(--mia-text-secondary);
+}
+
+.chain-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ============= Decision Badge ============= */
+.meeting-decision-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  background: var(--mia-accent);
+  color: var(--mia-bg);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 150ms ease;
+  z-index: 2;
+  font-family: var(--mia-font-body);
+}
+
+.meeting-decision-badge:hover {
+  background: var(--mia-primary);
+}
+
+/* ============= Decision Node ============= */
+.decision-node {
+  background: var(--mia-surface);
+  border: 1px solid var(--mia-border);
+  border-radius: 0;
+  padding: 10px 12px;
+  font-family: var(--mia-font-body);
+  overflow: hidden;
+  height: 100%;
+}
+
+.decision-node-color-bar {
+  height: 2px;
+  margin: -10px -12px 8px -12px;
+}
+
+.decision-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.decision-node-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mia-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  font-family: var(--mia-font-heading);
+}
+
+.decision-node-status {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.decision-node-description {
+  font-size: 11px;
+  color: var(--mia-text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.decision-node--external {
+  opacity: 0.55;
+}
+
+.decision-node-shared {
+  font-size: 10px;
+  color: var(--mia-text-muted);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============= Decision Meeting Node (compact) ============= */
+.decision-meeting-node {
+  background: var(--mia-surface);
+  border: 1px solid var(--mia-border);
+  border-radius: 0;
+  padding: 8px 10px;
+  font-family: var(--mia-font-body);
+  overflow: hidden;
+  height: 100%;
+}
+
+.decision-meeting-node--focused {
+  border-color: var(--mia-text-secondary);
+}
+
+.decision-meeting-node--external {
+  opacity: 0.6;
+}
+
+.decision-meeting-color-bar {
+  height: 2px;
+  margin: -8px -10px 6px -10px;
+}
+
+.decision-meeting-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mia-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--mia-font-heading);
+}
+
+.decision-meeting-day {
+  font-size: 10px;
+  color: var(--mia-text-tertiary);
+  margin-top: 2px;
+}
+
+/* ============= Decision Container (visual frame) ============= */
+.decision-container {
+  background: transparent;
+  border: 1px solid var(--mia-border);
+  border-radius: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+}
+
+.decision-container-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mia-border);
+  font-family: var(--mia-font-body);
+}
+
+.decision-container-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.decision-container-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mia-text);
+  font-family: var(--mia-font-heading);
+}
+
+.decision-container-day {
+  font-size: 12px;
+  color: var(--mia-text-tertiary);
+}
+
+/* ============= Decision View Header ============= */
+.decision-view-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--mia-bg);
+  border-bottom: 1px solid var(--mia-border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px;
+  font-family: var(--mia-font-body);
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.decision-view-header-back {
+  background: none;
+  border: none;
+  color: var(--mia-text-secondary);
+  font-size: 13px;
+  font-family: var(--mia-font-body);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  transition: color 150ms ease;
+}
+
+.decision-view-header-back:hover {
+  color: var(--mia-text);
+}
+
+.decision-view-header-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--mia-border);
+}
+
+.decision-view-header-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.decision-view-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.decision-view-header-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--mia-text);
+  font-family: var(--mia-font-heading);
+}
+
+.decision-view-header-meta {
+  font-size: 12px;
+  color: var(--mia-text-tertiary);
+  display: flex;
+  gap: 12px;
+}
+
+/* ============= Decision Node z-index Rules ============= */
+.react-flow__node-decision {
+  z-index: 15 !important;
+}
+
+.react-flow__node-decisionContainer {
+  z-index: 0 !important;
+}
+
+.react-flow__node-decisionMeeting {
+  z-index: 10 !important;
+}

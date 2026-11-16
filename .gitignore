@@ -1,0 +1,46 @@
+# Environment & Secrets (NEVER commit secrets)
+.env
+.env.*
+!.env.example
+!env.example
+*.pem
+*.key
+*.p12
+*credentials*.json
+*service-account*.json
+!**/test*/**
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# Node / Frontend / Meeting Bot
+node_modules/
+dist/
+build/
+logs/
+debug-videos/
+*.tsbuildinfo
+
+# Python / mia-search
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Go / Backend
+services/backend/server
+*.exe
+*.out
+coverage.txt
+
+# OS & Editors
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
