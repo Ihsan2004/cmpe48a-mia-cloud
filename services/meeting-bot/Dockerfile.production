@@ -105,7 +105,7 @@ EXPOSE 3000
 
 # Health check — skip in CLI mode (meeting containers don't run Express)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 \
-  CMD if [ -n "$MEETING_ID" ]; then exit 0; else node -e "require('http').get('http://localhost:' + (process.env.PORT || 3000) + '/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1; fi
+  CMD if [ -n "$MEETING_ID" ]; then exit 0; else node -e "require('http').get('http://127.0.0.1:' + (process.env.PORT || 3000) + '/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1; fi
 
 # Set the entry point
 ENTRYPOINT ["/usr/src/app/xvfb-run-wrapper"]

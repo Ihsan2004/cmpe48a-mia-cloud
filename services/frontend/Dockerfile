@@ -34,11 +34,12 @@ FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Copy templated nginx config (envsubst substitutes BACKEND_UPSTREAM & NGINX_RESOLVER)
-# 15-default-resolver.sh auto-detects Docker/GKE DNS resolver when NGINX_RESOLVER is unset.
+# 15-local-resolvers.envsh + 16-default-resolver.envsh auto-detect Docker/GKE DNS resolver.
 ENV BACKEND_UPSTREAM=http://mia-backend:8080
+ENV NGINX_ENTRYPOINT_LOCAL_RESOLVERS=1
 ENV NGINX_ENVSUBST_FILTER=^(BACKEND_UPSTREAM|NGINX_RESOLVER)$
-COPY 15-default-resolver.sh /docker-entrypoint.d/15-default-resolver.sh
-RUN chmod +x /docker-entrypoint.d/15-default-resolver.sh
+COPY 16-default-resolver.envsh /docker-entrypoint.d/16-default-resolver.envsh
+RUN chmod +x /docker-entrypoint.d/16-default-resolver.envsh
 COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 
 # Expose port

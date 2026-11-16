@@ -1,0 +1,11 @@
+#!/bin/sh
+# Sourced by nginx:alpine entrypoint after 15-local-resolvers.envsh.
+# Uses NGINX_RESOLVER if explicitly provided, otherwise auto-detected local DNS.
+if [ -z "${NGINX_RESOLVER:-}" ]; then
+  if [ -n "${NGINX_LOCAL_RESOLVERS:-}" ]; then
+    export NGINX_RESOLVER="${NGINX_LOCAL_RESOLVERS}"
+  else
+    _ns=$(awk '/^nameserver[[:space:]]+/{print $2; exit}' /etc/resolv.conf)
+    export NGINX_RESOLVER="${_ns:-127.0.0.11}"
+  fi
+fi
