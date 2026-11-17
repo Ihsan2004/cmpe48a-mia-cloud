@@ -53,7 +53,7 @@
   <rect x="36" y="274" width="166" height="68" rx="8" fill="#fff1f2" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4,3"/>
   <text x="119" y="299" text-anchor="middle" font-size="12" font-weight="700" fill="#881337">Locust Load Generator</text>
   <text x="119" y="316" text-anchor="middle" font-size="10" fill="#be123c">Traffic &amp; Scalability Tests</text>
-  <text x="119" y="330" text-anchor="middle" font-size="9.5" fill="#be123c">(Phase 4 Evaluation)</text>
+  <text x="119" y="330" text-anchor="middle" font-size="9.5" fill="#be123c">(Load &amp; Stress Testing)</text>
 
   <!-- Artifact Registry -->
   <rect x="36" y="394" width="166" height="62" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.3"/>
